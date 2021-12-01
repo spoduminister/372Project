@@ -38,6 +38,7 @@ int main(){
         //draws the image
         draw_image(PixelBuffer, width, height, particle_list, numParticles, Boxes);
         sprintf(title, "./Output/Frame_%d.bmp", numFrame++);
+        save_bmp((unsigned char *)PixelBuffer, width, height, title);
         
         //the particles have moved so the boxes are wrong and useless now
         free(Boxes);
