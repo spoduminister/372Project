@@ -62,15 +62,28 @@ static void close_window(void) {
 int main(){
     srand(time(NULL));
     //5 is just an arbitrary choice here; we can do however many is necessary for a good test 
-    int numParticles = 5;
+    int numParticles = 30;
     //initializing the particles; the intial position and velocity is also kind of arbitrary 
-    Particle * particle_list = init_particles(numParticles);
-
+    clock_t tick;
+    clock_t tock;
+    for(int i = 1; i< 10000; i+=100)
+    {
+        tick = clock();
+        Particle * particle_list = init_particles(i);
+        physics_step(particle_list, i,1.0f);
+        free(particle_list);
+        tock = clock();
+        printf("%d, %ld\n",i, tock - tick);
+        
+    }
+    
+    /*
     //end condition will be a stop button in the gui 
     while (running == 1) {
         //i think this for loop is the part we want to parallelize
         physics_step(particle_list, numParticles);
         //render();
     }
+    */
 
 }

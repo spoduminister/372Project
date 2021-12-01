@@ -1,6 +1,10 @@
 #include <math.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <float.h>
+#include <stdio.h>
+#include <time.h>
+#include <limits.h>
 #define dims 2
 enum AXIS {X, Y};
 
@@ -24,6 +28,6 @@ typedef struct{
 
 Particle * init_particles(int numParticles);
 
-Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[numParticles]);
+Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[numParticles], int BoxOffset, float timestep);
 
-void physics_step(Particle * particle_list, int numParticles);
+void physics_step(Particle * particle_list, int numParticles, float timestep);
