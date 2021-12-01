@@ -1,15 +1,16 @@
 #include "physics.h"
 
+//should move by one physics step
 void physics_step(Particle * particle_list, int numParticles, Box * Boxes, float timestep)
 {
     while(timestep > 0)
     {      
-        //find new timestep
-        //TODO parallel find time step
+        //TODO find time untill next collision event
+        //TODO parallel find collision time step
         float collision_step = timestep;
         
-        //step new timestep
-        //TODO parallel step time step
+        //step collision timestep
+        //TODO parallel step collision time step
         for(int i = 0; i < numParticles; i++)
         {
             for(int j = 0; j < dims; j++)

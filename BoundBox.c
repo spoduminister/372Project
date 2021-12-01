@@ -1,5 +1,7 @@
 #include "BoundBox.h"
 
+
+//returns the list of indexes of every particle index that intersects with bounds
 int * get_within_bounds(Box * Boxes, int box_num, vec_t min, vec_t max, int * P_num)
 {
     int * ret = (int *) malloc(sizeof(int));
@@ -59,7 +61,6 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 	
 	if(numParticles <1)
 	{
-		free(sub_particles);
 		free(parent);
 		return NULL;
 		
@@ -74,7 +75,6 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 			parent->max_pos.v[j] = fmax(particle_list[parent->P_index].pos.v[j], particle_list[parent->P_index].pos.v[j] + (particle_list[parent->P_index].vel.v[j]*timestep)) + particle_list[parent->P_index].radius;
 			parent->min_pos.v[j] = fmin(particle_list[parent->P_index].pos.v[j], particle_list[parent->P_index].pos.v[j] + (particle_list[parent->P_index].vel.v[j]*timestep)) - particle_list[parent->P_index].radius;
 		}
-		free(sub_particles);
 		return parent;
 	}
 	
@@ -112,8 +112,10 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 	for(int i = 0; i < (1<<dims); i++)
 	{
 		Box * child = build_boxes(particle_list, sub_particle_count[i], sub_particle_list[i],parent->numBoxes + BoxOffset,timestep);
+        free(sub_particle_list[i]);
 		if (child != NULL)
 		{
+            
 			parent = (Box *) realloc(parent, sizeof(Box) * (parent->numBoxes + child->numBoxes));
             memcpy(parent + parent->numBoxes, child, (sizeof(Box)*child->numBoxes));
             
@@ -132,6 +134,6 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 			parent->children[i] = -1;
 		}
 	}
-	free(sub_particles);
+    
 	return parent;
 }
