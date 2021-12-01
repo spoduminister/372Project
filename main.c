@@ -1,88 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//#include <gtk/gtk.h>
 #include "particle.h"
+#include "BoundBox.h"
+#include "physics.h"
+#include "draw2D.h"
+#include "bitmap.h"
 
 int width = 1000;
 int height = 1000;
 int running = 1;
-/*
-static cairo_surface_t* surface = NULL;
-
-static void clear_surface(void) {
-    cairo_t *cr;
-    cr = cairo_create(surface);
-
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_paint(cr);
-
-    cairo_destroy(cr);
-}
-
-static void resize_cb(GtkWidget *widget, width, height, gpointer data) {
-    if (surface) {
-        cairo_surface_destroy(surface);
-        surface = NULL;
-    }
-    if (gtk_native_get_surface(gtk_widget_get_native(widget))) {
-        surface = gdk_surface_create_similar_surface(gtk_native_get_surface(gtk_widget_get_native(widget)), CAIRO_CONTENT_COLOR, gtk_widget_get_width(widget), gtk_widget_get_height(widget));
-        clear_surface();
-    }
-}
-
-static void draw_cb(GtkDrawingArea *drawing_area, cairo_t *cr, width, height, gpointer data) {
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_paint(cr);
-}
-
-static void draw_particle(GtkWidget* widget, double x, double y) {
-    cairo_t *cr;
-    cr = cairo_create(surface);
-
-    //dont know if we need cairo_scale
-    //cairo_scale(cr, 1, 0.7);
-    cairo_arc(cr, x, y, 5, 0, 2 * M_PI);
-
-    cairo_fill(cr);
-
-    cairo_destroy(cr);
-
-    gtk_widget_queue_draw(widget);
-}
-
-static void close_window(void) {
-    if (surface) {
-        cairo_surface_destroy(surface);
-    }
-}*/
-
-
 
 int main(){
     srand(time(NULL));
-    //5 is just an arbitrary choice here; we can do however many is necessary for a good test 
     int numParticles = 30;
-    //initializing the particles; the intial position and velocity is also kind of arbitrary 
     clock_t tick;
     clock_t tock;
-    for(int i = 1; i< 10000; i+=100)
-    {
-        tick = clock();
-        Particle * particle_list = init_particles(i);
-        physics_step(particle_list, i,1.0f);
-        free(particle_list);
-        tock = clock();
-        printf("%d, %ld\n",i, tock - tick);
-        
-    }
+    float timestep = 1.0f;
+    //TESTING LOOP
+    unsigned int * PixelBuffer = (unsigned int *) malloc(sizeof(unsigned int) * width * height);
+    char title[64];
     
+    
+    tick = clock();
+    
+    Particle * particle_list = init_particles(numParticles,(vec_t){0,0},(vec_t){width,height});
+    int * sub_particles = (int *) malloc(sizeof(int) * numParticles);
+    for(int i = 0; i < numParticles; i++)sub_particles[i] = i;
+    Box * Boxes = build_boxes(particle_list, numParticles, sub_particles,0,timestep);
+    tock = clock();
+    printf("BUILD TIME:%ld\n", tock - tick);
+    tick = clock();
+    //physics_step(particle_list, numParticles,Boxes, timestep);
+    tock = clock();
+    printf("PHYSICS TIME:%ld\n", tock - tick);
+    tick = clock();
+    draw_image(PixelBuffer, width, height, particle_list, numParticles, Boxes);
+    sprintf(title, "./Output/Frame_%d.bmp", numParticles);
+    save_bmp((unsigned char *)PixelBuffer, width, height, title);
+	tock = clock();
+    free(Boxes);
+    free(particle_list);
+    
+    printf("DrawTime %ld\n", tock - tick);
+    
+    free(PixelBuffer);
     /*
+    Particle * particle_list = init_particles(numParticles);
     //end condition will be a stop button in the gui 
     while (running == 1) {
-        //i think this for loop is the part we want to parallelize
-        physics_step(particle_list, numParticles);
+        int * sub_particles = (int *) malloc(sizeof(int) * numParticles);
+        for(int i = 0; i < numParticles; i++)sub_particles[i] = i;
+        Box * Boxes = build_boxes(particle_list, numParticles, sub_particles,0,timestep);
+        
         //render();
+        
+        physics_step(particle_list, i,Boxes, timestep);
+        
+        free(Boxes);
+        
     }
     */
 

@@ -1,33 +1,22 @@
-#include <math.h>
+#ifndef __particle_H
+#define __particle_H
+
 #include <stdlib.h>
-#include <string.h>
-#include <float.h>
-#include <stdio.h>
-#include <time.h>
-#include <limits.h>
+
 #define dims 2
 enum AXIS {X, Y};
 
+typedef struct {
+	float v[dims];
+} vec_t;
+
 
 typedef struct{
-    float pos[dims];
-    float vel[dims];
-	float radius;
+    vec_t pos;      //pixels
+    vec_t vel;      // pixels per frame
+	float radius;   // pixels
 }Particle;
 
-typedef struct{
-    int numBoxes;
-    int P_index;
-    int num_Particles;
-    int children[(1<<dims)];
-    float max_pos[dims];
-    float min_pos[dims];
-    float mid_pos[dims];
-}Box;
+Particle * init_particles(int numParticles,vec_t min, vec_t max);
 
-
-Particle * init_particles(int numParticles);
-
-Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[numParticles], int BoxOffset, float timestep);
-
-void physics_step(Particle * particle_list, int numParticles, float timestep);
+#endif
