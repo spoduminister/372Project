@@ -47,7 +47,20 @@ void physics_step(Particle * particle_list, int numParticles, Box * Boxes, float
         
         //TODO actually resolve collisions
         //resolve collisions
-        
+        if (collision_step < timestep) {
+            float v1 = (float)sqrt(pow((double)particle_list[index[0]].vel.v[0], 2) + pow((double)particle_list[index[0]].vel.v[1], 2));
+            float v2 = (float)sqrt(pow((double)particle_list[index[1]].vel.v[0], 2) + pow((double)particle_list[index[1]].vel.v[1], 2));
+            //final x direction of particle 1; taking a random direction and making it a unit vector
+            float scalar = (float)rand() / (float)(RAND_MAX);
+            float fvx1_dir = (scalar * -1) * particle_list[index[0]].vel.v[0] / (particle_list[index[0]].vel.v[0] + particle_list[index[0]].vel.v[1]);
+            float fvy1_dir = ((1-scalar) * -1) * particle_list[index[0]].vel.v[1] / (particle_list[index[0]].vel.v[0] + particle_list[index[0]].vel.v[1]);
+            float fvx2_dir = (scalar * -1) * particle_list[index[1]].vel.v[0] / (particle_list[index[0]].vel.v[0] + particle_list[index[0]].vel.v[1]);
+            float fvy2_dir = ((1 - scalar) * -1) * particle_list[index[1]].vel.v[1] / (particle_list[index[0]].vel.v[0] + particle_list[index[0]].vel.v[1]);
+            particle_list[index[0]].vel.v[0] = fvx1_dir * v1;
+            particle_list[index[0]].vel.v[1] = fvy1_dir * v1;
+            particle_list[index[1]].vel.v[0] = fvx2_dir * v2;
+            particle_list[index[1]].vel.v[1] = fvy2_dir * v2;
+        }
         
         timestep -= collision_step;
     }
