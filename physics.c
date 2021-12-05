@@ -5,6 +5,7 @@
 float vec_dot(vec_t a, vec_t b)
 {
     float product_sum = 0.0f;
+
     for(int d = 0; d < dims; d++)
     {
         product_sum += a.v[d] * b.v[d];
@@ -14,6 +15,7 @@ float vec_dot(vec_t a, vec_t b)
 vec_t vec_sub(vec_t a, vec_t b)
 {
     vec_t diff;
+
     for(int d = 0; d < dims; d++)
     {
         diff.v[d] = a.v[d] - b.v[d];
@@ -23,6 +25,7 @@ vec_t vec_sub(vec_t a, vec_t b)
 vec_t vec_add(vec_t a, vec_t b)
 {
     vec_t sum;
+
     for(int d = 0; d < dims; d++)
     {
         sum.v[d] = a.v[d] + b.v[d];
@@ -41,10 +44,14 @@ void physics_step(Particle * particle_list, int numParticles, Box * Boxes, float
         float dist; 
         int index[2];
 
+
+	// UNCOMMENT FOR PARALLEL	
+	#pragma acc parallel loop
         for (int i = 0; i < numParticles; i++) {
             int pnum = 0;
             vec_t min;
             vec_t max;
+
             for(int j = 0; j < dims; j++)
 		    {
 			    max.v[j] = fmax(particle_list[i].pos.v[j], particle_list[i].pos.v[j] + (particle_list[i].vel.v[j]*timestep)) + particle_list[i].radius;
@@ -52,6 +59,7 @@ void physics_step(Particle * particle_list, int numParticles, Box * Boxes, float
 		    }
             int* colls = get_within_bounds(Boxes, 0, min, max, &pnum);
             if (colls != NULL) {
+
                 for (int j = 0; j < pnum; j++) {
                     if (colls[j] >= i) continue;
                     
@@ -82,6 +90,8 @@ void physics_step(Particle * particle_list, int numParticles, Box * Boxes, float
 
         //step collision timestep
         //TODO parallel step collision time step
+	// UNCOMMENT FOR PARALLEL
+	#pragma acc parallel loop
         for(int i = 0; i < numParticles; i++)
         {
             for(int j = 0; j < dims; j++)

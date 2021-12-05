@@ -7,6 +7,7 @@ int * get_within_bounds(Box * Boxes, int box_num, vec_t min, vec_t max, int * P_
     int * ret = (int *) malloc(sizeof(int));
     if (Boxes == NULL)return NULL;
     int within = 1;
+    
     for(int i = 0; i < dims; i++)
     {
         within |= Boxes[box_num].max_pos.v[i] >= min.v[i] && Boxes[box_num].min_pos.v[i] <= max.v[i];
@@ -51,7 +52,7 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
     parent->numBoxes = 1;
     parent->P_index = -1;
     parent->num_P = 0;
-    
+
 	for(int i = 0; i < dims; i++)
 	{
 		parent->max_pos.v[i] = NAN;
@@ -80,7 +81,7 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 	
 	int  * sub_particle_list[(1<<dims)];
 	int sub_particle_count[(1<<dims)];
-    
+
 	for(int i = 0; i < (1<<dims); i++)
 	{
 		sub_particle_list[i] = (int *) malloc(sizeof(int));
@@ -90,6 +91,7 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 	for(int i = 0; i < numParticles; i++)
 	{
 		int index = sub_particles[i];
+
 		for(int j = 0; j < dims; j++)
 		{
 			parent->mid_pos.v[j] = (particle_list[index].pos.v[j]/ ((float)numParticles)) + parent->mid_pos.v[j];
@@ -100,10 +102,12 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 	{
 		int region = 0;
 		int index = sub_particles[i];
+
 		for(int j = 0; j < dims; j++)
 		{
 			if (particle_list[index].pos.v[j] >= parent->mid_pos.v[j])region +=(1<<j);
 		}
+
 		sub_particle_count[region]+=1;
 		sub_particle_list[region] = realloc(sub_particle_list[region], sub_particle_count[region] * sizeof(int));
 		sub_particle_list[region][sub_particle_count[region] - 1] = index;
@@ -124,6 +128,7 @@ Box * build_boxes(Particle * particle_list, int numParticles, int sub_particles[
 				parent->min_pos.v[j] = fmin(parent->min_pos.v[j],child->min_pos.v[j]);
 				parent->max_pos.v[j] = fmax(parent->max_pos.v[j],child->max_pos.v[j]);
 			}
+
 			parent->children[i] = parent->numBoxes + BoxOffset;
 			parent->numBoxes += child->numBoxes;
             parent->num_P += child->num_P;

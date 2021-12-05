@@ -4,6 +4,7 @@ Particle * init_particles(int numParticles, vec_t min_pos, vec_t max_pos)
 {
     //generates some random particles within the bounds of min and max
 	Particle * particle_list = (Particle *) malloc(sizeof(Particle) * numParticles);
+	
 	for(int i = 0; i < numParticles; i++)
 	{
 		for(int j = 0; j < dims; j++)

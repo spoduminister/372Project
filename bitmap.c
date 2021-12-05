@@ -81,13 +81,12 @@ void save_bmp(unsigned char * data, int width, int height, char * title) {
 	int stride = (widthBytes) + paddingSize;
 	
 	FILE * imageFile = fopen(title, "wb");
-	
 	unsigned char * fileHeader = createBitmapFileHeader(height, stride);
 	fwrite(fileHeader, 1, BITMAP_FILE_HEADER_SIZE, imageFile);
 	
 	unsigned char * infoHeader = createBitmapInfoHeader(height, width);
 	fwrite(infoHeader, 1, BITMAP_INFO_HEADER_SIZE, imageFile);
-	
+
 	for(int i = 0; i < height; i++) {
 		fwrite(data + (i * widthBytes), BYTES_PER_PIXEL, width, imageFile);
 		fwrite(padding, 1, paddingSize, imageFile);
