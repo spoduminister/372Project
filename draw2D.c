@@ -2,6 +2,8 @@
 
 void draw_image(unsigned int * PixelBuffer, int width, int height, Particle * particle_list, int numParticles, Box * Boxes)
 {
+    // UNCOMMENT FOR PARALLEL MULTICORE ONLY
+    #pragma acc parallel loop
     for(int i = 0; i < width * height; i++) {
 		
 		int x = i % width;
@@ -11,10 +13,12 @@ void draw_image(unsigned int * PixelBuffer, int width, int height, Particle * pa
         int particle_count = 0;
         int *  particle_indexes = get_within_bounds(Boxes, 0, point, point, &particle_count);
         float color_val = 0.0f;
+
         for(int j = 0; j < particle_count; j++)
         {
             int index = particle_indexes[j];
             float distSq = 0.0f;
+
             for(int d = 0; d < dims; d++)
             {
                 distSq += pow((particle_list[index].pos.v[d] - point.v[d])/particle_list[index].radius,2);
