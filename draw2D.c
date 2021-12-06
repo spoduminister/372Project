@@ -13,12 +13,11 @@ void draw_image(unsigned int * PixelBuffer, int width, int height, Particle * pa
         int particle_count = 0;
         int *  particle_indexes = get_within_bounds(Boxes, 0, point, point, &particle_count);
         float color_val = 0.0f;
-	float distSq = 0.0f;
 
         for(int j = 0; j < particle_count; j++)
         {
             int index = particle_indexes[j];
-            distSq = 0.0f;
+            float distSq = 0.0f;
 
             for(int d = 0; d < dims; d++)
             {
